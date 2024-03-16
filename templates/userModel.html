@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Feed</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+{% include 'navbar.html' %}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1 class="mb-4">User Model</h1>
+            <p>Below is content items, news types and their relevance scores stored in the application's session</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Content Item</th>
+                        <th>News Type</th>
+                        <th>Relevance Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for query in queries %}
+                    <tr>
+                        <td>{{ query[0] }}</td>
+                        <td>{{ query[1] }}</td>
+                        <td>{{ query[2] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
