@@ -9,6 +9,11 @@
         .article-content {
             line-height: 1.6;
         }
+        .keyword-link {
+            color: blue; /* Set link color */
+            text-decoration: none; /* Add underline to links */
+            cursor: pointer; /* Set cursor to pointer on hover */
+        }
     </style>
 </head>
 <body>
@@ -18,14 +23,34 @@
     <div class="container mt-5">
         <div class="row">
             <div class="col-md-8 offset-md-2">
-                <h1 class="text-center">{{ title }}</h1>
+                <h1 class="text-center">
+                    {% set words = title.split() %}
+                        {% for word in words %}
+                            {% if word in keywords %}
+                                <a href="#" class="keyword-link">{{ word }}</a>
+                            {% else %}
+                                {{ word }}
+                            {% endif %}
+                            {% if not loop.last %} {% endif %}
+                        {% endfor %}
+                </h1>
                 {% if image %}
                 <div class="text-center">
                     <img src="{{ image }}" class="img-fluid mb-3" alt="Article Image">
                 </div>
                 {% endif %}
                 <div class="article-content">
-                    <p>{{ article_content }}</p>
+                    <p>
+                        {% set words = article_content.split() %}
+                        {% for word in words %}
+                            {% if word in keywords %}
+                                <a href="#" class="keyword-link">{{ word }}</a>
+                            {% else %}
+                                {{ word }}
+                            {% endif %}
+                            {% if not loop.last %} {% endif %}
+                        {% endfor %}
+                    </p>
                 </div>
                 <div class="mt-3" id="feedbackContainer">
                     <form method="POST" action="/classifierLike">

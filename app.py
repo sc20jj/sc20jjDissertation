@@ -18,18 +18,15 @@ def extract_names(text):
     # Process the text with spaCy
     doc = nlp(text)
     
-    # Initialize lists to store extracted names
-    names = []
-    football_entities = []
+    # Initialize a list to store both names and football entities
+    combined_entities = []
 
     # Extract names and potential football team/league names
     for ent in doc.ents:
-        if ent.label_ == "PERSON":  # Extract person names
-            names.append(ent.text)
-        elif ent.label_ == "ORG":   # Extract organization names
-            football_entities.append(ent.text)
+        if ent.label_ == "PERSON" or ent.label_ == "ORG":  # Extract both person names and organization names
+            combined_entities.append(ent.text)
 
-    return names, football_entities
+    return combined_entities
 
 def extract_news(url):
     # Send a GET request to the URL
@@ -320,7 +317,11 @@ def latest(word):
 def news():
         link = "https://www.manchestereveningnews.co.uk/sport/football/football-news/pep-guardiola-makes-arsenal-point-28782278"
         title, image, article_content = extract_news(link)
-        return render_template('news.html', title=title, image=image, article_content=article_content)
+
+        keywords = extract_names(title + " " + article_content)
+        print(keywords)
+
+        return render_template('news.html', title=title, image=image, article_content=article_content, keywords=keywords)
 
 @app.route('/like', methods=['POST'])
 def like():
@@ -377,15 +378,6 @@ def dislike():
 def usermodel():
     queries = session['queries']
     return render_template('userModel.html', queries=queries)
-
-text = "Pep Guardiola makes Arsenal point ahead of Liverpool FC vs Man City Article ImageManchester City manager Pep Guardiola spoke about Arsenal's recent form when asked to look beyond Jurgen Klopp's Liverpool Get the latest City team news, transfer stories, match updates and analysis delivered straight to your inbox - FREE We have more newsletters Get the latest City team news, transfer stories, match updates and analysis delivered straight to your inbox - FREE We have more newsletters City trail Liverpool by a point heading into the game but both could be below Arsenal in the table when they kick off as Mikel Arteta's side look to continue their recent form that included them routing Sheffield United on Monday night. Asked if like would be easier without Klopp's Liverpool next season, Guardiola still expects them to challenge but also spoke about how strong Arsenal have looked recently after pushing City all the way last season. 'I would like to know but I don't think so,' he said. 'Liverpool have always been Liverpool and the contenders are there. 'Arsenal is already there, last season they were our biggest rivals. Look how they play. Liverpool need more than 90 minutes to win the game, sometimes more; Arsenal sometimes need just 25 minutes to win the games. That's why they are there. 'I guess Tottenham will make a step forward and United and Newcastle will maybe be back having one game a week. It's next season and I don't have the ability to think about what is going to happen next.'"
-
-# Extract names and potential football team/league names
-names, football_entities = extract_names(text)
-
-# Print the results
-print("Names:", names)
-print("Potential Football Teams/Leagues:", football_entities)
 
 def process_categories(categories, opinion):
     category_list = categories.split(',')
