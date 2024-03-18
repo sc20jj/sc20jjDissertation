@@ -16,6 +16,18 @@ def google_news_GET(topic, news_type):
     top_5_responses = all_response['items'][:1]  # Assuming 'articles' is the key for the list of articles
     return top_5_responses
 
+def google_news_GET_many(topic, news_type, n):
+    url = "https://google-news13.p.rapidapi.com/search"
+    querystring = {"keyword":str(topic) + " " + str(news_type),"lr":"en-US"}
+    headers = {
+        "X-RapidAPI-Key": "f9ad3cd1bdmsh63ce9f557ee648ap1d00c6jsn7d3a27193a51",
+        "X-RapidAPI-Host": "google-news13.p.rapidapi.com"
+    }
+    response = requests.get(url, headers=headers, params=querystring)
+    all_response = response.json()
+    top_n_responses = all_response['items'][:n]  # Assuming 'articles' is the key for the list of articles
+    return top_n_responses
+
 def chat_gpt_GET(word):
     ("testing123: " + str(word))
     url = "https://chatgpt-best-price.p.rapidapi.com/v1/chat/completions"

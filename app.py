@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import spacy
 
 from const import *
-from rest import google_news_GET, chat_gpt_GET, team_id_GET, team_statistics_GET, team_recent_transfers_GET, team_recent_injuries_GET, team_lastest_score_GET, large_language_model_classifier
+from rest import google_news_GET, chat_gpt_GET, team_id_GET, team_statistics_GET, team_recent_transfers_GET, team_recent_injuries_GET, team_lastest_score_GET, large_language_model_classifier, google_news_GET_many
 
 app = Flask(__name__)
 app.secret_key = "hello"
@@ -55,6 +55,31 @@ def extract_news(url):
     print(article_content)
 
     return title, image, article_content
+
+def count_item_news_type_pairs(formatted_news_feed):
+    pairs_count = {}
+    result_hashmap = {}
+    
+    for entry in formatted_news_feed:
+        item = entry['item']
+        news_type = entry['news_type']
+        pair = (item, news_type)
+        
+        if pair in pairs_count:
+            pairs_count[pair] += 1
+        else:
+            pairs_count[pair] = 1
+            
+    for pair, count in pairs_count.items():
+        if count > 1:
+            # Convert the first element of the pair to an integer before subtracting 1
+            print(pair[0] + " " + pair[1] + " " + str(count - 1))
+            result_hashmap[pair] = google_news_GET_many(pair[0], pair[1], count - 1)
+        else:
+            result_hashmap[pair] = []  # No need to call google_news_GET_many when count <= 1
+            
+    return result_hashmap
+
 
 def generate_queries(team_interests, content_interests):
     queries = []
@@ -134,15 +159,24 @@ def index():
     proportions = calculate_proportions(queries)
     print(proportions)
 
-    total_articles = len(queries)
+    total_articles = len(queries) * 2
 
     formatted_news_feed = generate_formatted_news_feed(queries, proportions, total_articles)
 
     print("Formatted News Feed:", formatted_news_feed)
 
-    print(session['interests profile'])
-    print(session['content style profile'])
+    # print(session['interests profile'])
+    # print(session['content style profile'])
     # print(session['demographic profile'])
+
+    # pairs_count = count_item_news_type_pairs(formatted_news_feed)
+
+    # print("Item - News Type - Count:")
+    # for pair, count in pairs_count.items():
+    #     print(f"{pair[0]} - {pair[1]} - {count}")
+
+    print("OUTPUT!!!")
+    print(count_item_news_type_pairs(formatted_news_feed))
 
     return render_template("feed.html", news_feed=formatted_news_feed)
 
@@ -270,9 +304,25 @@ def clear():
 
     return render_template("news.html", articles=articles)
 
-@app.route('/gpt/<word>', methods=['GET', 'POST'])
-def gpt(word):
-    return render_template("facts.html", word=word, info=chat_gpt_GET(word))
+# @app.route('/gpt/<word>', methods=['GET', 'POST'])
+# def gpt(word):
+
+#     #return render_template("facts.html", word=word, info=chat_gpt_GET(word))
+#     info = chat_gpt_GET(word)
+#     return info
+
+@app.route('/gpt', methods=['GET'])  # Only allow GET requests for this route
+def gpt():
+    # Get the keyword from the request arguments
+    keyword = request.args.get('keyword')
+    
+    # Call your function to process the keyword and generate the response
+    # For example, you might have a function called chat_gpt_GET(keyword)
+    # to generate the response based on the keyword
+    response = chat_gpt_GET(keyword)
+    
+    # Return the response
+    return response
 
 @app.route('/keywords/<word>', methods=['GET', 'POST'])
 def keywords(word):
@@ -418,11 +468,6 @@ def classifierLike():
 
         article_title = request.form['word1']
         article_content = request.form['word2']
-
-        # article = """
-        #                 Pep Guardiola makes Arsenal point ahead of Liverpool FC vs Man City
-        #                 Manchester City manager Pep Guardiola spoke about Arsenal's recent form when asked to look beyond Jurgen Klopp's Liverpool Get the latest City team news, transfer stories, match updates and analysis delivered straight to your inbox - FREE We have more newsletters Get the latest City team news, transfer stories, match updates and analysis delivered straight to your inbox - FREE We have more newsletters City trail Liverpool by a point heading into the game but both could be below Arsenal in the table when they kick off as Mikel Arteta's side look to continue their recent form that included them routing Sheffield United on Monday night. Asked if like would be easier without Klopp's Liverpool next season, Guardiola still expects them to challenge but also spoke about how strong Arsenal have looked recently after pushing City all the way last season. "I would like to know but I don't think so," he said. "Liverpool have always been Liverpool and the contenders are there. "Arsenal is already there, last season they were our biggest rivals. Look how they play. Liverpool need more than 90 minutes to win the game, sometimes more; Arsenal sometimes need just 25 minutes to win the games. That's why they are there. "I guess Tottenham will make a step forward and United and Newcastle will maybe be back having one game a week. It's next season and I don't have the ability to think about what is going to happen next."
-        #                 """
 
         article = "Disliked Article: Title - {}, Content - {}".format(article_title, article_content)
 
