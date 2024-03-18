@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import spacy
 
 from const import *
-from rest import google_news_GET, chat_gpt_GET, team_id_GET, team_statistics_GET, team_recent_transfers_GET, team_recent_injuries_GET, team_lastest_score_GET
+from rest import google_news_GET, chat_gpt_GET, team_id_GET, team_statistics_GET, team_recent_transfers_GET, team_recent_injuries_GET, team_lastest_score_GET, large_language_model_classifier
 
 app = Flask(__name__)
 app.secret_key = "hello"
@@ -137,14 +137,14 @@ def index():
     proportions = calculate_proportions(queries)
     print(proportions)
 
-    total_articles = 30
+    total_articles = len(queries) * 2
 
     formatted_news_feed = generate_formatted_news_feed(queries, proportions, total_articles)
 
     print("Formatted News Feed:", formatted_news_feed)
 
-    # print(session['interests profile'])
-    # print(session['content style profile'])
+    print(session['interests profile'])
+    print(session['content style profile'])
     # print(session['demographic profile'])
 
     return render_template("feed.html", news_feed=formatted_news_feed)
@@ -386,3 +386,48 @@ names, football_entities = extract_names(text)
 # Print the results
 print("Names:", names)
 print("Potential Football Teams/Leagues:", football_entities)
+
+def process_categories(categories, opinion):
+    category_list = categories.split(',')
+    
+    print("Category List: ")
+    print(category_list)
+
+    print("content: ")
+    print(content)
+
+    for category in category_list:
+        if category.strip() in content:
+            t = session['content style profile']
+            if opinion == "like":
+                if t[category.strip()] == 0:
+                    t[category.strip()] += 0.5
+                else:
+                    t[category.strip()] += 0.1
+            else:
+                t[category.strip()] -= 0.1            
+            session['content style profile'] = t
+
+        else:
+            t = session['interests profile']
+            if opinion == "like":
+                if t[category.strip()] == 0:
+                    t[category.strip()] += 0.5
+                else:
+                    t[category.strip()] += 0.1
+            else:
+                t[category.strip()] -= 0.1          
+            session['interests profile'] = t
+
+@app.route('/classifier')
+def classifier():
+    article = """
+                    Pep Guardiola makes Arsenal point ahead of Liverpool FC vs Man City
+                    Article Image
+                    Manchester City manager Pep Guardiola spoke about Arsenal's recent form when asked to look beyond Jurgen Klopp's Liverpool Get the latest City team news, transfer stories, match updates and analysis delivered straight to your inbox - FREE We have more newsletters Get the latest City team news, transfer stories, match updates and analysis delivered straight to your inbox - FREE We have more newsletters City trail Liverpool by a point heading into the game but both could be below Arsenal in the table when they kick off as Mikel Arteta's side look to continue their recent form that included them routing Sheffield United on Monday night. Asked if like would be easier without Klopp's Liverpool next season, Guardiola still expects them to challenge but also spoke about how strong Arsenal have looked recently after pushing City all the way last season. "I would like to know but I don't think so," he said. "Liverpool have always been Liverpool and the contenders are there. "Arsenal is already there, last season they were our biggest rivals. Look how they play. Liverpool need more than 90 minutes to win the game, sometimes more; Arsenal sometimes need just 25 minutes to win the games. That's why they are there. "I guess Tottenham will make a step forward and United and Newcastle will maybe be back having one game a week. It's next season and I don't have the ability to think about what is going to happen next."
+                    """
+    result = large_language_model_classifier(article)
+
+    process_categories(result, "like")
+
+    return result

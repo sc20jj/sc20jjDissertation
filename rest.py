@@ -2,6 +2,8 @@ import requests
 import json
 from datetime import datetime
 
+from const import *
+
 def google_news_GET(topic, news_type):
     url = "https://google-news13.p.rapidapi.com/search"
     querystring = {"keyword":str(topic) + " " + str(news_type),"lr":"en-US"}
@@ -35,6 +37,35 @@ def chat_gpt_GET(word):
 
     data  = json.dumps(response.json())
     data2 = json.loads(data)
+    return data2['choices'][0]['message']['content']
+
+def large_language_model_classifier(article):
+
+    all_categories = leagues + premier_league_teams + bundesliga_teams + la_liga_teams + serie_a_teams + ligue_1_teams + mls_teams + content
+
+    # Convert the list to a string separated by commas
+    categories_string = ", ".join(all_categories)
+
+    url = "https://chatgpt-best-price.p.rapidapi.com/v1/chat/completions"
+    payload = {
+        "model": "gpt-3.5-turbo",
+        "messages": [
+            {
+                "role": "user",
+                "content": f"Can you take in a news article and classify it into as many of these categories as you see fit that are relavent to the article's information (but the maximum is 5 categories). But only return a string of categories separated by commas: {categories_string}"
+            }
+        ]
+    }
+    headers = {
+        "content-type": "application/json",
+        "X-RapidAPI-Key": "f9ad3cd1bdmsh63ce9f557ee648ap1d00c6jsn7d3a27193a51",
+        "X-RapidAPI-Host": "chatgpt-best-price.p.rapidapi.com"
+    }
+    response = requests.post(url, json=payload, headers=headers)
+
+    data  = json.dumps(response.json())
+    data2 = json.loads(data)
+    #print(data2)
     return data2['choices'][0]['message']['content']
 
 def team_statistics_GET(team_id):

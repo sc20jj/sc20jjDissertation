@@ -46,3 +46,12 @@ mls_teams = [
         "Seattle Sounders FC", "Sporting Kansas City", "Toronto FC", "Vancouver Whitecaps FC"
     ]
 
+content = [
+            "Team Statistics",
+            "Transfer News",
+            "Injury News",
+            "Last Fixture",
+            "Team News Updates",
+            "Educational Content"
+        ]
+
