@@ -46,13 +46,16 @@ def large_language_model_classifier(article):
     # Convert the list to a string separated by commas
     categories_string = ", ".join(all_categories)
 
+    print("categories string: ")
+    print(categories_string)
+
     url = "https://chatgpt-best-price.p.rapidapi.com/v1/chat/completions"
     payload = {
         "model": "gpt-3.5-turbo",
         "messages": [
             {
                 "role": "user",
-                "content": f"Can you take in a news article and classify it into as many of these categories as you see fit that are relavent to the article's information (but the maximum is 5 categories). But only return a string of categories separated by commas: {categories_string}"
+                "content": f"Can you take in a news article and classify it into as many of these categories as you see fit that are relavent to the article's information focusing on key team names, leagues and news types (but the maximum is 5 categories). But only return a string of categories separated by commas: {categories_string}"
             }
         ]
     }

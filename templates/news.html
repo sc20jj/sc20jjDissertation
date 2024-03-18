@@ -27,13 +27,51 @@
                 <div class="article-content">
                     <p>{{ article_content }}</p>
                 </div>
-                <div class="mt-3">
-                    <a href="{{ url_for('like')}}" class="btn btn-success mr-2">Like</a>
-                    <a href="{{ url_for('dislike')}}" class="btn btn-danger">Dislike</a>
+                <div class="mt-3" id="feedbackContainer">
+                    <form method="POST" action="/classifierLike">
+                        <input type="hidden" name="word1" value="{{ title }}">
+                        <input type="hidden" name="word2" value="{{ article_content }}">
+                        <button type="submit" class="btn btn-success mr-2" id="likeBtn">Like</button>
+                    </form>
+                    <form method="POST" action="/classifierDislike">
+                        <input type="hidden" name="word1" value="{{ title }}">
+                        <input type="hidden" name="word2" value="{{ article_content }}">
+                        <button type="submit" class="btn btn-danger" id="dislikeBtn">Dislike</button>
+                    </form>
+                </div>
+                <div class="mt-3" id="thankYouMessage" style="display: none;">
+                    <b>Thank you for your feedback.</b>
                 </div>
                 <br><br>
             </div>
         </div>
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('form').submit(function(event){
+                event.preventDefault(); // Prevent the default form submission
+                var form = $(this);
+                var formData = form.serialize(); // Serialize form data
+                $.ajax({
+                    type: 'POST',
+                    url: form.attr('action'),
+                    data: formData,
+                    contentType: 'application/x-www-form-urlencoded', // Set content type
+                    success: function(response) {
+                        console.log(response);
+                        // Hide both buttons
+                        $('#feedbackContainer').hide();
+                        // Show thank you message
+                        $('#thankYouMessage').show();
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
