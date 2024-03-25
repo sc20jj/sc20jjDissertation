@@ -40,7 +40,14 @@ def extract_news(url):
     soup = BeautifulSoup(response.content, 'html.parser')
     
     # Find the title of the article
-    title = soup.find('h1').text.strip()
+    title = soup.find('h1')
+
+    # ... existing code ...
+    title_tag = soup.find('h1')
+    if title_tag is not None:
+        title = title_tag.text.strip()
+    else:
+        title = ''
 
     # Find the image associated with the article (if any)
     image = soup.find('img')['src'] if soup.find('img') else None
@@ -63,7 +70,7 @@ def extract_news(url):
 
 def count_item_news_type_pairs(formatted_news_feed):
     pairs_count = {}
-    result_hashmap = {}
+    result = []
     
     for entry in formatted_news_feed:
         item = entry['item']
@@ -79,11 +86,12 @@ def count_item_news_type_pairs(formatted_news_feed):
         if count > 1:
             # Convert the first element of the pair to an integer before subtracting 1
             print(pair[0] + " " + pair[1] + " " + str(count - 1))
-            result_hashmap[pair] = google_news_GET_many(pair[0], pair[1], count - 1)
-        else:
-            result_hashmap[pair] = []  # No need to call google_news_GET_many when count <= 1
+            # Call google_news_GET_many and append each result to the result array
+            data_list = google_news_GET_many(pair[0], pair[1], count - 1)
+            for data_item in data_list:
+                result.append({'item': pair[0], 'news_type': 'Team News Updates', 'data': data_item})
             
-    return result_hashmap
+    return result
 
 
 def generate_queries(team_interests, content_interests):
@@ -164,42 +172,71 @@ def index():
     proportions = calculate_proportions(queries)
     print(proportions)
 
-    total_articles = len(queries) * 1.5
+    total_articles = len(queries) * 2
 
     formatted_news_feed = generate_formatted_news_feed(queries, proportions, total_articles)
 
     print("Formatted News Feed:", formatted_news_feed)
 
+    extra_content = count_item_news_type_pairs(formatted_news_feed)
+    print("Extra Content: ")
+    print(extra_content)
+
+    # Create a dictionary to store unique items based on 'item' and 'news_type' combination
+    unique_items_dict = {}
+
+    # Iterate over the original array
+    for item in formatted_news_feed:
+        # Create a tuple of 'item' and 'news_type'
+        key = (item['item'], item['news_type'])
+        # Check if the tuple is not already in the dictionary
+        if key not in unique_items_dict:
+            # Add the item to the dictionary with the tuple as key
+            unique_items_dict[key] = item
+
+    # Extract the values from the dictionary to obtain the list of unique items
+    unique_items = list(unique_items_dict.values())
+
+    for item in extra_content:
+        unique_items.append(item)
+
+    print("Unique Items with Extra Content:")
+    print(unique_items)
+
     # print(session['interests profile'])
     # print(session['content style profile'])
     # print(session['demographic profile'])
-
-    # pairs_count = count_item_news_type_pairs(formatted_news_feed)
-
-    # print("Item - News Type - Count:")
-    # for pair, count in pairs_count.items():
-    #     print(f"{pair[0]} - {pair[1]} - {count}")
-
-    # extra_content = count_item_news_type_pairs(formatted_news_feed)
-    # print(extra_content)
     
-    news_articles = ["Barcelona beat Liverpool FC in a thrilling match. Lionel Messi scored two goals to secure a 3-2 victory for Barcelona. Liverpool FC's Mohamed Salah also scored a goal, but it wasn't enough to prevent their defeat. Hopefully Liverpool can win! Liverpool.",
-                 "Arsenal emerged victorious in a thrilling Champions League encounter against Juventus. Karim Benzema's exceptional performance led Arsenal to a 2-1 victory over Juventus. Despite a goal from Juventus' Cristiano Ronaldo, Arsenal secured the win with goals from Benzema and Vinicius Junior",
-                 "Manchester City showcased their dominance in a Premier League showdown against Chelsea. With goals from Kevin De Bruyne and Raheem Sterling, Manchester City secured a comfortable 3-0 victory over Chelsea. Despite Chelsea's efforts, they couldn't break through Manchester City's solid defense",
-                 "Bayern Munich put on a stellar performance in a Bundesliga battle against Paris Saint-Germain. Robert Lewandowski's impressive hat-trick led Bayern Munich to a resounding 4-1 victory over Paris Saint-Germain. Despite an early goal from PSG's Kylian Mbappé, Bayern Munich dominated the game with their attacking prowess",
-                 "AC Milan clinched a narrow victory in a thrilling Serie A derby against Inter Milan. Zlatan Ibrahimovic proved to be the hero for AC Milan, scoring the decisive goal to seal a 2-1 win over Inter Milan. Despite Inter Milan's relentless efforts, AC Milan held on to claim the crucial three points in the derby clash."]
+    # news_articles = ["Barcelona beat Liverpool FC in a thrilling match. Lionel Messi scored two goals to secure a 3-2 victory for Barcelona. Liverpool FC's Mohamed Salah also scored a goal, but it wasn't enough to prevent their defeat. Hopefully Liverpool can win! Liverpool.",
+    #              "Arsenal emerged victorious in a thrilling Champions League encounter against Juventus. Karim Benzema's exceptional performance led Arsenal to a 2-1 victory over Juventus. Despite a goal from Juventus' Cristiano Ronaldo, Arsenal secured the win with goals from Benzema and Vinicius Junior",
+    #              "Manchester City showcased their dominance in a Premier League showdown against Chelsea. With goals from Kevin De Bruyne and Raheem Sterling, Manchester City secured a comfortable 3-0 victory over Chelsea. Despite Chelsea's efforts, they couldn't break through Manchester City's solid defense",
+    #              "Bayern Munich put on a stellar performance in a Bundesliga battle against Paris Saint-Germain. Robert Lewandowski's impressive hat-trick led Bayern Munich to a resounding 4-1 victory over Paris Saint-Germain. Despite an early goal from PSG's Kylian Mbappé, Bayern Munich dominated the game with their attacking prowess",
+    #              "AC Milan clinched a narrow victory in a thrilling Serie A derby against Inter Milan. Zlatan Ibrahimovic proved to be the hero for AC Milan, scoring the decisive goal to seal a 2-1 win over Inter Milan. Despite Inter Milan's relentless efforts, AC Milan held on to claim the crucial three points in the derby clash."]
     
-    title, _, content = extract_news("https://www.football.london/arsenal-fc/news/gabriel-martinelli-bukayo-saka-gabriel-28879502")
-    news_articles.append(title + " " + content)
+    # title, _, content = extract_news("https://www.football.london/arsenal-fc/news/gabriel-martinelli-bukayo-saka-gabriel-28879502")
+    # news_articles.append(title + " " + content)
 
-    for i in range(len(news_articles)):
-        tf_article = compute_tf_for_article(news_articles[i], session['interests profile'])
-        print("computed tf for article" + str(i) + ": " + str(tf_article))
-        similarity = compute_cosine_similarity(tf_article, session['interests profile'])
-        print("similarity" + str(i) + ": " + str(similarity))
-        print("-----")
+    # similarities = []
+    # for i, article in enumerate(news_articles):
+    #     similarity = compute_cosine_similarity(compute_tf_for_article(article, session['interests profile']), session['interests profile'])
+    #     similarities.append((i, similarity))
 
-    return render_template("feed.html", news_feed=formatted_news_feed)
+    # # Sort articles based on similarity scores in descending order
+    # similarities.sort(key=lambda x: x[1], reverse=True)
+
+    # # Print sorted articles and their similarity scores
+    # for i, similarity_tuple in enumerate(similarities):
+    #     idx, similarity = similarity_tuple
+    #     print(f"Article {idx + 1} - Similarity: {similarity:.4f}")
+    #     print(news_articles[idx])
+    #     print("-----")
+
+
+    pa = process_articles(unique_items, session['interests profile'])
+    print("Processed Articles: ")
+    print(pa)
+
+    return render_template("feed.html", news_feed=pa)
 
 @app.route('/form/', methods=('GET', 'POST'))
 def form():
@@ -384,9 +421,9 @@ def latest(word):
 
     return render_template("latest.html",home_team_name=home_team_name, away_team_name=away_team_name, score=score, home_goals=home_goals, away_goals=away_goals, home_red_cards=home_red_cards, away_red_cards=away_red_cards, home_yellow_cards=home_yellow_cards, away_yellow_cards=away_yellow_cards, team_name=word) 
 
-@app.route('/news', methods=['GET', 'POST'])
-def news():
-        link = "https://www.manchestereveningnews.co.uk/sport/football/football-news/pep-guardiola-makes-arsenal-point-28782278"
+@app.route('/news/<link>', methods=['GET', 'POST'])
+def news(link):
+        link = str(link)
         title, image, article_content = extract_news(link)
 
         keywords = extract_names(title + " " + article_content)
@@ -537,8 +574,12 @@ def compute_tf_for_article(article, user_model):
         user_model = [term.lower() for term in user_model]
         # Compute the total number of words in the article
         total_words = len(tokens)
-        # Compute the term frequency for each term in the user model
-        tf = {term: tokens.count(term) / total_words for term in user_model}
+
+        if total_words != 0:
+            tf = {term: tokens.count(term) / total_words for term in user_model}
+        else:
+            tf = {term: 0 for term in user_model}
+
         return tf
     else:
         return {}
@@ -552,3 +593,42 @@ def compute_cosine_similarity(tfidf_vector, user_model_vector):
     similarity_score = cosine_similarity(tfidf_array, user_model_array)[0][0]
     
     return similarity_score
+
+def process_articles(articles, user_model):
+    processed_articles = []
+    
+    for article in articles:
+        item_name = article['item']
+        news_type = article['news_type']
+        data = article['data']
+        
+        if news_type == 'Team News Updates':
+            title, _, content = extract_news(data['newsUrl'])
+            content = title + " " + content
+        else:
+            content = data['title']
+        
+        print("TESTING!!!!" + str(data))
+
+        # Compute TF for the article based on the user model
+        tf = compute_tf_for_article(content, user_model)
+        
+        # Compute cosine similarity between the TF-IDF vector and user model vector
+        similarity_score = compute_cosine_similarity(tf, user_model)
+        
+        # Store the article structure and similarity score in a dictionary
+        processed_article = {
+            'item': item_name,
+            'news_type': news_type,
+            'data': data,
+            'similarity_score': similarity_score
+        }
+        
+        # Append the processed article to the array
+        processed_articles.append(processed_article)
+    
+    # Sort the processed articles based on similarity score in descending order
+    processed_articles.sort(key=lambda x: x['similarity_score'], reverse=True)
+    
+    return processed_articles
+ 

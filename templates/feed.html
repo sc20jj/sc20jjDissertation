@@ -15,7 +15,17 @@
 
     {% for news in news_feed %}
 
-            {% if news.news_type == 'Injury News' %}
+            {% if news.news_type == 'Team News Updates' %}
+            <div class="article">
+                <h2>{{ news.data.title }}</h2>
+                <p>{{ news.data.snippet }}</p>
+                <img src="{{ news.data.images.thumbnailProxied }}" class="img-fluid" style="width: 275px; height: 183px;">
+                <p>Publisher: {{ news.data.publisher }}</p>
+                <a href="{{ url_for('news', link=news.data.newsUrl) }}" class="btn btn-primary">Read more</a>
+                <hr>
+            </div>
+
+            {% elif news.news_type == 'Injury News' %}
             <div class="article">
                 <h2>{{ news.data.title }}</h2>
                 <p>Click here to see current {{news.news_type}} for {{news.item}}</p>
