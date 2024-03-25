@@ -4,6 +4,11 @@ import json
 from datetime import datetime
 from bs4 import BeautifulSoup
 import spacy
+import re
+from sklearn.feature_extraction.text import TfidfVectorizer
+from collections import Counter
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
 
 from const import *
 from rest import google_news_GET, chat_gpt_GET, team_id_GET, team_statistics_GET, team_recent_transfers_GET, team_recent_injuries_GET, team_lastest_score_GET, large_language_model_classifier, google_news_GET_many
@@ -101,27 +106,27 @@ def format_news_feed_post(query):
     if news_type == 'Team News Updates':
         #data = google_news_GET(item_name, news_type)
         data = {
-            "title": str(item_name) + " " + str(news_type),
+            "title": "This article is about " + str(news_type) + " for " + str(item_name),
         }
     elif news_type == 'Injury News':
         #data = team_recent_transfers_GET(item_name)
         data = {
-            "title": str(item_name) + " " + str(news_type),
+            "title": "This article is about " + str(news_type) + " for " + str(item_name),
         }
     elif news_type == 'Transfer News':
         #data = team_recent_transfers_GET(item_name)
         data = {
-            "title": str(item_name) + " " + str(news_type),
+            "title": "This article is about " + str(news_type) + " for " + str(item_name),
         }
     elif news_type == 'Team Statistics':
         #data = team_statistics_GET(item_name)
         data = {
-            "title": str(item_name) + " " + str(news_type),
+            "title": "This article is about " + str(news_type) + " for " + str(item_name),
         }
     elif news_type == 'Last Fixture':
         #data = team_lastest_score_GET(item_name)
         data = {
-            "title": str(item_name) + " " + str(news_type),
+            "title": "This article is about " + str(news_type) + " for " + str(item_name),
         }
     else:
         # Handle unsupported news type
@@ -159,7 +164,7 @@ def index():
     proportions = calculate_proportions(queries)
     print(proportions)
 
-    total_articles = len(queries) * 2
+    total_articles = len(queries) * 1.5
 
     formatted_news_feed = generate_formatted_news_feed(queries, proportions, total_articles)
 
@@ -175,8 +180,24 @@ def index():
     # for pair, count in pairs_count.items():
     #     print(f"{pair[0]} - {pair[1]} - {count}")
 
-    print("OUTPUT!!!")
-    print(count_item_news_type_pairs(formatted_news_feed))
+    # extra_content = count_item_news_type_pairs(formatted_news_feed)
+    # print(extra_content)
+    
+    news_articles = ["Barcelona beat Liverpool FC in a thrilling match. Lionel Messi scored two goals to secure a 3-2 victory for Barcelona. Liverpool FC's Mohamed Salah also scored a goal, but it wasn't enough to prevent their defeat. Hopefully Liverpool can win! Liverpool.",
+                 "Arsenal emerged victorious in a thrilling Champions League encounter against Juventus. Karim Benzema's exceptional performance led Arsenal to a 2-1 victory over Juventus. Despite a goal from Juventus' Cristiano Ronaldo, Arsenal secured the win with goals from Benzema and Vinicius Junior",
+                 "Manchester City showcased their dominance in a Premier League showdown against Chelsea. With goals from Kevin De Bruyne and Raheem Sterling, Manchester City secured a comfortable 3-0 victory over Chelsea. Despite Chelsea's efforts, they couldn't break through Manchester City's solid defense",
+                 "Bayern Munich put on a stellar performance in a Bundesliga battle against Paris Saint-Germain. Robert Lewandowski's impressive hat-trick led Bayern Munich to a resounding 4-1 victory over Paris Saint-Germain. Despite an early goal from PSG's Kylian Mbappé, Bayern Munich dominated the game with their attacking prowess",
+                 "AC Milan clinched a narrow victory in a thrilling Serie A derby against Inter Milan. Zlatan Ibrahimovic proved to be the hero for AC Milan, scoring the decisive goal to seal a 2-1 win over Inter Milan. Despite Inter Milan's relentless efforts, AC Milan held on to claim the crucial three points in the derby clash."]
+    
+    title, _, content = extract_news("https://www.football.london/arsenal-fc/news/gabriel-martinelli-bukayo-saka-gabriel-28879502")
+    news_articles.append(title + " " + content)
+
+    for i in range(len(news_articles)):
+        tf_article = compute_tf_for_article(news_articles[i], session['interests profile'])
+        print("computed tf for article" + str(i) + ": " + str(tf_article))
+        similarity = compute_cosine_similarity(tf_article, session['interests profile'])
+        print("similarity" + str(i) + ": " + str(similarity))
+        print("-----")
 
     return render_template("feed.html", news_feed=formatted_news_feed)
 
@@ -496,3 +517,38 @@ def classifierDislike():
         process_categories(result, "dislike")
 
         return result
+
+# Function to preprocess text
+def preprocess_text(text):
+    # Convert text to lowercase
+    text = text.lower()
+    # Remove special characters and punctuations
+    text = re.sub(r'[^\w\s]', '', text)
+    return text
+
+# Function to compute TF for terms in a single article based on the user model
+def compute_tf_for_article(article, user_model):
+    # Preprocess the article text
+    preprocessed_article = preprocess_text(article)
+    if preprocessed_article:
+        # Tokenize the preprocessed article
+        tokens = preprocessed_article.split()
+        # Convert terms in user model to lower case
+        user_model = [term.lower() for term in user_model]
+        # Compute the total number of words in the article
+        total_words = len(tokens)
+        # Compute the term frequency for each term in the user model
+        tf = {term: tokens.count(term) / total_words for term in user_model}
+        return tf
+    else:
+        return {}
+
+def compute_cosine_similarity(tfidf_vector, user_model_vector):
+    # Convert the TF-IDF vector and user model vector to numpy arrays
+    tfidf_array = np.array(list(tfidf_vector.values())).reshape(1, -1)
+    user_model_array = np.array(list(user_model_vector.values())).reshape(1, -1)
+    
+    # Compute the cosine similarity between the two vectors
+    similarity_score = cosine_similarity(tfidf_array, user_model_array)[0][0]
+    
+    return similarity_score

@@ -44,8 +44,8 @@
             </div>       
             {% elif news.news_type == 'Last Fixture' %}
             <div class="article">
-                <h2>Click here to see the {{news.news_type}} for {{news.item}}</h2>
-                <p>{{ news.data.title }}</p>
+                <h2>{{ news.data.title }}</h2>
+                <p>Click here to see the {{news.news_type}} for {{news.item}}</p>
                 <img src="https://as1.ftcdn.net/v2/jpg/02/15/77/78/1000_F_215777872_IM6pThhTuHckoNNZTeJgTgTEvrmWen5n.jpg" class="img-fluid" style="width: 275px; height: 183px;">
                 <p>Publisher: API-Football</p>
                 <a href="{{ url_for('latest', word=news.item) }}" class="btn btn-primary">Read more</a>
