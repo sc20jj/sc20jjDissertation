@@ -116,27 +116,22 @@ def format_news_feed_post(query):
     news_type = query[1]
 
     if news_type == 'Team News Updates':
-        #data = google_news_GET(item_name, news_type)
         data = {
             "title": "This article is about " + str(news_type) + " for " + str(item_name),
         }
     elif news_type == 'Injury News':
-        #data = team_recent_transfers_GET(item_name)
         data = {
             "title": "This article is about " + str(news_type) + " for " + str(item_name),
         }
     elif news_type == 'Transfer News':
-        #data = team_recent_transfers_GET(item_name)
         data = {
             "title": "This article is about " + str(news_type) + " for " + str(item_name),
         }
     elif news_type == 'Team Statistics':
-        #data = team_statistics_GET(item_name)
         data = {
             "title": "This article is about " + str(news_type) + " for " + str(item_name),
         }
     elif news_type == 'Last Fixture':
-        #data = team_lastest_score_GET(item_name)
         data = {
             "title": "This article is about " + str(news_type) + " for " + str(item_name),
         }
@@ -206,36 +201,7 @@ def index():
 
     print("Unique Items with Extra Content:")
     print(unique_items)
-
-    # print(session['interests profile'])
-    # print(session['content style profile'])
-    # print(session['demographic profile'])
     
-    # news_articles = ["Barcelona beat Liverpool FC in a thrilling match. Lionel Messi scored two goals to secure a 3-2 victory for Barcelona. Liverpool FC's Mohamed Salah also scored a goal, but it wasn't enough to prevent their defeat. Hopefully Liverpool can win! Liverpool.",
-    #              "Arsenal emerged victorious in a thrilling Champions League encounter against Juventus. Karim Benzema's exceptional performance led Arsenal to a 2-1 victory over Juventus. Despite a goal from Juventus' Cristiano Ronaldo, Arsenal secured the win with goals from Benzema and Vinicius Junior",
-    #              "Manchester City showcased their dominance in a Premier League showdown against Chelsea. With goals from Kevin De Bruyne and Raheem Sterling, Manchester City secured a comfortable 3-0 victory over Chelsea. Despite Chelsea's efforts, they couldn't break through Manchester City's solid defense",
-    #              "Bayern Munich put on a stellar performance in a Bundesliga battle against Paris Saint-Germain. Robert Lewandowski's impressive hat-trick led Bayern Munich to a resounding 4-1 victory over Paris Saint-Germain. Despite an early goal from PSG's Kylian Mbappé, Bayern Munich dominated the game with their attacking prowess",
-    #              "AC Milan clinched a narrow victory in a thrilling Serie A derby against Inter Milan. Zlatan Ibrahimovic proved to be the hero for AC Milan, scoring the decisive goal to seal a 2-1 win over Inter Milan. Despite Inter Milan's relentless efforts, AC Milan held on to claim the crucial three points in the derby clash."]
-    
-    # title, _, content = extract_news("https://www.football.london/arsenal-fc/news/gabriel-martinelli-bukayo-saka-gabriel-28879502")
-    # news_articles.append(title + " " + content)
-
-    # similarities = []
-    # for i, article in enumerate(news_articles):
-    #     similarity = compute_cosine_similarity(compute_tf_for_article(article, session['interests profile']), session['interests profile'])
-    #     similarities.append((i, similarity))
-
-    # # Sort articles based on similarity scores in descending order
-    # similarities.sort(key=lambda x: x[1], reverse=True)
-
-    # # Print sorted articles and their similarity scores
-    # for i, similarity_tuple in enumerate(similarities):
-    #     idx, similarity = similarity_tuple
-    #     print(f"Article {idx + 1} - Similarity: {similarity:.4f}")
-    #     print(news_articles[idx])
-    #     print("-----")
-
-
     pa = process_articles(unique_items, session['interests profile'])
     print("Processed Articles: ")
     print(pa)
@@ -357,21 +323,6 @@ def clear():
     session.pop("interests profile", None)
     session.pop("content style profile", None)
     return redirect(url_for("index"))
-
-# @app.route('/news')
-# def news():
-#     test = google_news_GET("VfL Wolfsburg", "Transfer News")
-#     data  = json.dumps(test)
-#     articles = json.loads(data)
-
-    return render_template("news.html", articles=articles)
-
-# @app.route('/gpt/<word>', methods=['GET', 'POST'])
-# def gpt(word):
-
-#     #return render_template("facts.html", word=word, info=chat_gpt_GET(word))
-#     info = chat_gpt_GET(word)
-#     return info
 
 @app.route('/gpt', methods=['GET'])  # Only allow GET requests for this route
 def gpt():
@@ -546,11 +497,6 @@ def classifierDislike():
 
         article_title = request.form['word1']
         article_content = request.form['word2']
-
-        # article = """
-        #                 Pep Guardiola makes Arsenal point ahead of Liverpool FC vs Man City
-        #                 Manchester City manager Pep Guardiola spoke about Arsenal's recent form when asked to look beyond Jurgen Klopp's Liverpool Get the latest City team news, transfer stories, match updates and analysis delivered straight to your inbox - FREE We have more newsletters Get the latest City team news, transfer stories, match updates and analysis delivered straight to your inbox - FREE We have more newsletters City trail Liverpool by a point heading into the game but both could be below Arsenal in the table when they kick off as Mikel Arteta's side look to continue their recent form that included them routing Sheffield United on Monday night. Asked if like would be easier without Klopp's Liverpool next season, Guardiola still expects them to challenge but also spoke about how strong Arsenal have looked recently after pushing City all the way last season. "I would like to know but I don't think so," he said. "Liverpool have always been Liverpool and the contenders are there. "Arsenal is already there, last season they were our biggest rivals. Look how they play. Liverpool need more than 90 minutes to win the game, sometimes more; Arsenal sometimes need just 25 minutes to win the games. That's why they are there. "I guess Tottenham will make a step forward and United and Newcastle will maybe be back having one game a week. It's next season and I don't have the ability to think about what is going to happen next."
-        #                 """
 
         article = "Liked Article: Title - {}, Content - {}".format(article_title, article_content)
 
