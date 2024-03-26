@@ -50,7 +50,11 @@ def extract_news(url):
         title = ''
 
     # Find the image associated with the article (if any)
-    image = soup.find('img')['src'] if soup.find('img') else None
+    img_tag = soup.find('img')
+    if img_tag and 'src' in img_tag.attrs:
+        image = img_tag['src']
+    else:
+        image = None
 
     # Find all paragraphs within the main article content
     paragraphs = []
@@ -421,9 +425,9 @@ def latest(word):
 
     return render_template("latest.html",home_team_name=home_team_name, away_team_name=away_team_name, score=score, home_goals=home_goals, away_goals=away_goals, home_red_cards=home_red_cards, away_red_cards=away_red_cards, home_yellow_cards=home_yellow_cards, away_yellow_cards=away_yellow_cards, team_name=word) 
 
-@app.route('/news/<link>', methods=['GET', 'POST'])
-def news(link):
-        link = str(link)
+@app.route('/news', methods=['GET', 'POST'])
+def news():
+        link = request.args.get('link', type=str)
         title, image, article_content = extract_news(link)
 
         keywords = extract_names(title + " " + article_content)
