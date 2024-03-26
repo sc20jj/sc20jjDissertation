@@ -30,7 +30,7 @@
                     <div class="card-body">
                         {% if home_goals %}
                             {% for home_player in home_goals %}
-                                <p><img src="https://t3.ftcdn.net/jpg/00/96/80/12/360_F_96801264_LxnFl2GQwAsQ4pt2KirLv7zXKHkRm7Dx.jpg" class="goal-image" alt="Goal">{{home_player}}</p>
+                                <p><img src="https://t3.ftcdn.net/jpg/00/96/80/12/360_F_96801264_LxnFl2GQwAsQ4pt2KirLv7zXKHkRm7Dx.jpg" class="goal-image" alt="Goal"><a href="#" class="keyword-link" data-toggle="modal" data-target="#responseModal" data-keyword="{{ home_player }}">{{ home_player }}</a></p>
                             {% endfor %}
                         {% else %}
                             <p>N/A</p>
@@ -44,7 +44,7 @@
                     <div class="card-body">
                         {% if home_red_cards %}
                             {% for home_player in home_red_cards %}
-                                <p><img src="https://banner2.cleanpng.com/20180428/csq/kisspng-computer-icons-penalty-card-red-card-football-5ae4830825b711.3008949115249251921545.jpg" class="red-card-image" alt="Red Card">{{home_player}}</p>
+                                <p><img src="https://banner2.cleanpng.com/20180428/csq/kisspng-computer-icons-penalty-card-red-card-football-5ae4830825b711.3008949115249251921545.jpg" class="red-card-image" alt="Red Card"><a href="#" class="keyword-link" data-toggle="modal" data-target="#responseModal" data-keyword="{{ home_player }}">{{ home_player }}</a></p>
                             {% endfor %}
                         {% else %}
                             <p>N/A</p>
@@ -58,7 +58,7 @@
                     <div class="card-body">
                         {% if home_yellow_cards %}
                             {% for home_player in home_yellow_cards %}
-                                <p><img src="https://i.pinimg.com/originals/4e/40/34/4e4034197399997c66c3f94164d759de.png" class="yellow-card-image" alt="Yellow Card">{{home_player}}</p>
+                                <p><img src="https://i.pinimg.com/originals/4e/40/34/4e4034197399997c66c3f94164d759de.png" class="yellow-card-image" alt="Yellow Card"><a href="#" class="keyword-link" data-toggle="modal" data-target="#responseModal" data-keyword="{{ home_player }}">{{ home_player }}</a></p>
                             {% endfor %}
                         {% else %}
                             <p>N/A</p>
@@ -74,7 +74,7 @@
                     <div class="card-body">
                         {% if away_goals %}
                             {% for away_player in away_goals %}
-                                <p><img src="https://t3.ftcdn.net/jpg/00/96/80/12/360_F_96801264_LxnFl2GQwAsQ4pt2KirLv7zXKHkRm7Dx.jpg" class="goal-image" alt="Goal">{{away_player}}</p>
+                                <p><img src="https://t3.ftcdn.net/jpg/00/96/80/12/360_F_96801264_LxnFl2GQwAsQ4pt2KirLv7zXKHkRm7Dx.jpg" class="goal-image" alt="Goal"><a href="#" class="keyword-link" data-toggle="modal" data-target="#responseModal" data-keyword="{{ away_player }}">{{ away_player }}</a></p>
                             {% endfor %}
                         {% else %}
                             <p>N/A</p>
@@ -88,7 +88,7 @@
                     <div class="card-body">
                         {% if away_red_cards %}
                             {% for away_player in away_red_cards %}
-                                <p><img src="https://banner2.cleanpng.com/20180428/csq/kisspng-computer-icons-penalty-card-red-card-football-5ae4830825b711.3008949115249251921545.jpg" class="red-card-image" alt="Red Card">{{away_player}}</p>
+                                <p><img src="https://banner2.cleanpng.com/20180428/csq/kisspng-computer-icons-penalty-card-red-card-football-5ae4830825b711.3008949115249251921545.jpg" class="red-card-image" alt="Red Card"><a href="#" class="keyword-link" data-toggle="modal" data-target="#responseModal" data-keyword="{{ away_player }}">{{ away_player }}</a></p>
                             {% endfor %}
                         {% else %}
                             <p>N/A</p>
@@ -102,7 +102,7 @@
                     <div class="card-body">
                         {% if away_yellow_cards %}
                             {% for away_player in away_yellow_cards %}
-                                <p><img src="https://i.pinimg.com/originals/4e/40/34/4e4034197399997c66c3f94164d759de.png" class="yellow-card-image" alt="Yellow Card">{{away_player}}</p>
+                                <p><img src="https://i.pinimg.com/originals/4e/40/34/4e4034197399997c66c3f94164d759de.png" class="yellow-card-image" alt="Yellow Card"><a href="#" class="keyword-link" data-toggle="modal" data-target="#responseModal" data-keyword="{{ away_player }}">{{ away_player }}</a></p>
                             {% endfor %}
                         {% else %}
                             <p>N/A</p>
@@ -129,8 +129,50 @@
         <br><br>
     </div>
 
+    <div class="modal fade" id="responseModal" tabindex="-1" role="dialog" aria-labelledby="responseModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="responseModalLabel">Information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="responseBody">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
     <script>
+
+        $('.keyword-link').click(function(event){
+                event.preventDefault(); // Prevent the default link behavior
+                var keyword = $(this).data('keyword');
+                $.ajax({
+                    type: 'GET',
+                    url: '/gpt', 
+                    data: {'keyword': keyword}, 
+                    success: function(response) {
+                        // Display the response in the modal
+                        $('#responseBody').html(response);
+                        $('#responseModal').modal('show');
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+
         $(document).ready(function(){
             $('form').submit(function(event){
                 event.preventDefault(); // Prevent the default form submission

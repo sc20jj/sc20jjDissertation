@@ -15,12 +15,12 @@
         {% for transfer in transfer_info %}
         <div class="card mb-3">
             <div class="card-body">
-                <h3 class="card-title">Player Name: <a href="{{ url_for('gpt', word=transfer['Name']) }}">{{transfer['Name']}}</a></h3>
+                <h3 class="card-title">Player Name: <a href="#" class="keyword-link" data-toggle="modal" data-target="#responseModal" data-keyword="{{ transfer['Name'] }}">{{ transfer['Name'] }}</a></h3>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">Transfer Date: {{ transfer['Transfer Date'] }}</li>
                     <li class="list-group-item">Transfer Type: {{ transfer['Type'] }}</li>
-                    <li class="list-group-item">Incoming Team: <a href="{{ url_for('gpt', word=transfer['Incoming Team Name']) }}">{{transfer['Incoming Team Name']}}</a></li>
-                    <li class="list-group-item">Outgoing Team: <a href="{{ url_for('gpt', word=transfer['Outgoing Team Name']) }}">{{transfer['Outgoing Team Name']}}</a></li>
+                    <li class="list-group-item">Incoming Team: <a href="#" class="keyword-link" data-toggle="modal" data-target="#responseModal" data-keyword="{{ transfer['Incoming Team Name'] }}">{{ transfer['Incoming Team Name'] }}</a></li>
+                    <li class="list-group-item">Outgoing Team: <a href="#" class="keyword-link" data-toggle="modal" data-target="#responseModal" data-keyword="{{ transfer['Outgoing Team Name'] }}">{{ transfer['Outgoing Team Name'] }}</a></li>
                 </ul>
             </div>
         </div>
@@ -43,8 +43,50 @@
         <br><br>
     </div>
 
+    <div class="modal fade" id="responseModal" tabindex="-1" role="dialog" aria-labelledby="responseModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="responseModalLabel">Information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="responseBody">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
     <script>
+
+        $('.keyword-link').click(function(event){
+            event.preventDefault(); // Prevent the default link behavior
+            var keyword = $(this).data('keyword');
+            $.ajax({
+                type: 'GET',
+                url: '/gpt', 
+                data: {'keyword': keyword}, 
+                success: function(response) {
+                    // Display the response in the modal
+                    $('#responseBody').html(response);
+                    $('#responseModal').modal('show');
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+
         $(document).ready(function(){
             $('form').submit(function(event){
                 event.preventDefault(); // Prevent the default form submission
