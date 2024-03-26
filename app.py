@@ -11,7 +11,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
 from const import *
-from rest import google_news_GET, chat_gpt_GET, team_id_GET, team_statistics_GET, team_recent_transfers_GET, team_recent_injuries_GET, team_lastest_score_GET, large_language_model_classifier, google_news_GET_many
+from rest import google_news_demographic_GET, chat_gpt_GET, team_id_GET, team_statistics_GET, team_recent_transfers_GET, team_recent_injuries_GET, team_lastest_score_GET, large_language_model_classifier, google_news_GET_many
 
 app = Flask(__name__)
 app.secret_key = "hello"
@@ -99,12 +99,14 @@ def count_item_news_type_pairs(formatted_news_feed):
 
 
 def generate_queries(team_interests, content_interests):
+    leagues = ["PremierLeague", "LaLiga", "Bundesliga", "SerieA", "Ligue1", "MLS"]
     queries = []
     for team, team_interest in team_interests.items():
-        for content, content_interest in content_interests.items():
-            relevance_score = team_interest * content_interest
-            if relevance_score > 0:
-                queries.append((team, content, relevance_score))
+        if team not in leagues:
+            for content, content_interest in content_interests.items():
+                relevance_score = team_interest * content_interest
+                if relevance_score > 0:
+                    queries.append((team, content, relevance_score))
     
     # Sort queries based on relevance score in descending order
     queries.sort(key=lambda x: x[2], reverse=True)
@@ -202,11 +204,16 @@ def index():
     print("Unique Items with Extra Content:")
     print(unique_items)
     
+    # add demographic result to the news feed
+    demographic_result_list = google_news_demographic_GET("football news", "in " + str(session['demographic profile']['Country']))
+    demographic_result = demographic_result_list[0]
+    unique_items.append({'item': "Location", 'news_type': 'Team News Updates', 'data': demographic_result})
+
     pa = process_articles(unique_items, session['interests profile'])
     print("Processed Articles: ")
     print(pa)
 
-    return render_template("feed.html", news_feed=pa)
+    return render_template("feed.html", news_feed=pa, user=session['demographic profile'])
 
 @app.route('/form/', methods=('GET', 'POST'))
 def form():
@@ -378,13 +385,27 @@ def latest(word):
 
 @app.route('/news', methods=['GET', 'POST'])
 def news():
-        link = request.args.get('link', type=str)
-        title, image, article_content = extract_news(link)
+    link = request.args.get('link', type=str)
+    demographic_profile_json = request.args.get('demographic_profile')
 
+    # Replace single quotes with double quotes
+    demographic_profile_json = demographic_profile_json.replace("'", '"')
+
+    demographic_profile = json.loads(demographic_profile_json)
+
+    title, image, article_content = extract_news(link)
+
+    print("Demographic Profile: ")
+    print(demographic_profile)
+
+    if demographic_profile['Knowledge Level'] == 'Beginner':
         keywords = extract_names(title + " " + article_content)
-        print(keywords)
+    else:
+        keywords = []
 
-        return render_template('news.html', title=title, image=image, article_content=article_content, keywords=keywords)
+    print(keywords)
+
+    return render_template('news.html', title=title, image=image, article_content=article_content, keywords=keywords)
 
 @app.route('/like', methods=['POST'])
 def like():
@@ -440,7 +461,9 @@ def dislike():
 @app.route('/usermodel')
 def usermodel():
     queries = session['queries']
-    return render_template('userModel.html', queries=queries)
+    demographic_profile = session['demographic profile']
+    content = session['content style profile']
+    return render_template('userModel.html', queries=queries, demographic_profile=demographic_profile, content=content)
 
 def process_categories(categories, opinion):
     category_list = categories.split(',')

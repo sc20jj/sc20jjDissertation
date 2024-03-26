@@ -4,7 +4,7 @@ from datetime import datetime
 
 from const import *
 
-def google_news_GET(topic, news_type):
+def google_news_demographic_GET(topic, news_type):
     url = "https://google-news13.p.rapidapi.com/search"
     querystring = {"keyword":str(topic) + " " + str(news_type),"lr":"en-US"}
     headers = {
