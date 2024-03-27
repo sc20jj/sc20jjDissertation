@@ -50,8 +50,6 @@ content = [
             "Team Statistics",
             "Transfer News",
             "Injury News",
-            "Last Fixture",
-            "Team News Updates",
-            "Educational Content"
-        ]
+            "Last Fixture"        
+    ]
 

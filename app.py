@@ -224,7 +224,7 @@ def form():
     if request.method == 'POST':
 
         Leagues = ['PremierLeague', 'LaLiga', 'Bundesliga', 'SerieA', 'Ligue1', 'MLS']
-        type_of_content = ['Team Statistics', 'Transfer News', 'Injury News', 'Last Fixture', 'Team News Updates', 'Educational Content']
+        type_of_content = ['Team Statistics', 'Transfer News', 'Injury News', 'Last Fixture']
 
         name = request.form.get('name')
         birthday = request.form.get('birthday')
@@ -272,9 +272,7 @@ def form():
             "Team Statistics",
             "Transfer News",
             "Injury News",
-            "Last Fixture",
-            "Team News Updates",
-            "Educational Content"
+            "Last Fixture"
         ]
 
         print("Meep meep")
@@ -329,6 +327,8 @@ def clear():
     session.pop("user profile", None)
     session.pop("interests profile", None)
     session.pop("content style profile", None)
+    session.pop("demographic profile", None)
+    session.pop("queries", None)
     return redirect(url_for("index"))
 
 @app.route('/gpt', methods=['GET'])  # Only allow GET requests for this route
@@ -475,27 +475,34 @@ def process_categories(categories, opinion):
     print(content)
 
     for category in category_list:
-        if category.strip() in content:
+        category = category.strip()
+        if category in content:
             t = session['content style profile']
-            if opinion == "like":
-                if t[category.strip()] == 0:
-                    t[category.strip()] += 0.5
+            if category in t:
+                if opinion == "like":
+                    if t[category] == 0:
+                        t[category] += 0.25
+                    else:
+                        t[category] += 0.1
                 else:
-                    t[category.strip()] += 0.1
+                    t[category] -= 0.1            
+                session['content style profile'] = t
             else:
-                t[category.strip()] -= 0.1            
-            session['content style profile'] = t
+                print(f"Key {category} not found in content style profile.")
 
         else:
             t = session['interests profile']
-            if opinion == "like":
-                if t[category.strip()] == 0:
-                    t[category.strip()] += 0.5
+            if category in t:
+                if opinion == "like":
+                    if t[category] == 0:
+                        t[category] += 0.25
+                    else:
+                        t[category] += 0.1
                 else:
-                    t[category.strip()] += 0.1
+                    t[category] -= 0.1          
+                session['interests profile'] = t
             else:
-                t[category.strip()] -= 0.1          
-            session['interests profile'] = t
+                print(f"Key {category} not found in interests profile.")
 
 @app.route('/classifierLike', methods=['POST'])
 def classifierLike():
