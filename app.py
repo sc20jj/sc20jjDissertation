@@ -173,6 +173,8 @@ def index():
     proportions = calculate_proportions(queries)
     print(proportions)
 
+    session['proportions'] = proportions
+
     total_articles = len(queries) * 2
 
     formatted_news_feed = generate_formatted_news_feed(queries, proportions, total_articles)
@@ -463,7 +465,8 @@ def usermodel():
     queries = session['queries']
     demographic_profile = session['demographic profile']
     content = session['content style profile']
-    return render_template('userModel.html', queries=queries, demographic_profile=demographic_profile, content=content)
+    proportions = session['proportions']
+    return render_template('userModel.html', queries=queries, demographic_profile=demographic_profile, content=content, proportions=proportions)
 
 def process_categories(categories, opinion):
     category_list = categories.split(',')

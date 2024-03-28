@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>News Feed</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -18,26 +19,11 @@
         </div>
     </div>
     <div class="row">
+
         <div class="col-md-8 offset-md-2">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Content Item</th>
-                        <th>News Type</th>
-                        <th>Relevance Score</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for query in queries %}
-                    <tr>
-                        <td>{{ query[0] }}</td>
-                        <td>{{ query[1] }}</td>
-                        <td>{{ query[2] }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <canvas id="myPieChart"></canvas>
         </div>
+
     </div>
     <div class="row mt-5">
         <div class="col-md-8 offset-md-2">
@@ -85,5 +71,45 @@
     </div>
 </div>
 <br><br>
+
+<script>
+    var data = {{ proportions | tojson }};
+    var queries = {{ queries | tojson }};
+    
+    // Generate labels based on queries
+    var labels = queries.map(query => query[0] + ' - ' + query[1]);
+
+    // Function to generate a random color
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    // Generate a color for each segment
+    var backgroundColors = Array.from({length: data.length}, () => getRandomColor());
+
+    var ctx = document.getElementById('myPieChart').getContext('2d');
+    var myPieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels, // Use the labels generated from queries
+            datasets: [{
+                label: 'Interests',
+                data: data,
+                backgroundColor: backgroundColors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+</script>
+
 </body>
 </html>
