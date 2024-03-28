@@ -66,6 +66,10 @@
 
         <form id="regForm" action="{{ url_for("form") }}" method="post">
 
+            <h3>Please complete this form so that the application can learn more about you!</h3>
+            <p>This information is stored within Sessions/Cookies and can be cleared at any time</p>
+            <br>
+
             <!-- One "tab" for each step in the form: -->
             <div class="tab">
               <br>
@@ -87,6 +91,7 @@
             
 
           <div class="tab">
+            <label for="ageRange"><b>Leagues of Interest: </b></label>
             <div class="custom-control custom-checkbox">
                 <input type="checkbox" class="custom-control-input" id="PremierLeague" name="PremierLeague" value="clicked" onclick="toggleDropdown(this)">
                 <label class="custom-control-label" for="PremierLeague">British Premier League</label>
@@ -115,7 +120,7 @@
 
         <div class="tab">
           <div id="PremierLeagueTeams" class="form-group">
-              <label for="PremierLeagueTeams">Premier League:</label>
+              <label for="PremierLeagueTeams"><b>Premier League:</b></label>
               <select id="PremierLeagueTeams" name="PremierLeagueTeams" class="selectpicker form-control" multiple data-live-search="true">
                   <option value="Arsenal">Arsenal</option>
                   <option value="Aston Villa">Aston Villa</option>
@@ -141,7 +146,7 @@
           </div>
                       
           <div id="LaLigaTeams" class="form-group">
-              <label for="LaLigaTeams">La Liga:</label>
+              <label for="LaLigaTeams"><b>La Liga:</b></label>
               <select id="LaLigaTeams" name="LaLigaTeams" class="selectpicker form-control" multiple data-live-search="true">
                   <option value="Real Madrid">Real Madrid</option>
                   <option value="Barcelona">Barcelona</option>
@@ -167,7 +172,7 @@
           </div>
       
           <div id="BundesligaTeams" class="form-group">
-              <label for="BundesligaTeams">Bundesliga:</label>
+              <label for="BundesligaTeams"><b>Bundesliga:</b></label>
               <select id="BundesligaTeams" name="BundesligaTeams" class="selectpicker form-control" multiple data-live-search="true" >
                   <option value="Bayern Munich">Bayern Munich</option>
                   <option value="Borussia Dortmund">Borussia Dortmund</option>
@@ -193,7 +198,7 @@
           </div>
       
           <div id="SerieATeams" class="form-group">
-              <label for="SerieATeams">Serie A:</label>
+              <label for="SerieATeams"><b>Serie A:</b></label>
               <select id="SerieATeams" name="SerieATeams" class="selectpicker form-control" multiple data-live-search="true" >
                   <option value="Juventus">Juventus</option>
                   <option value="Inter Milan">Inter Milan</option>
@@ -219,7 +224,7 @@
           </div>
       
           <div id="MLSTeams" class="form-group">
-              <label for="MLSTeams">MLS:</label>
+              <label for="MLSTeams"><b>MLS:</b></label>
               <select id="MLSTeams" name="MLSTeams" class="selectpicker form-control" multiple data-live-search="true" >
                   <option value="Atlanta United">Atlanta United</option>
                   <option value="Chicago Fire FC">Chicago Fire FC</option>
@@ -253,7 +258,7 @@
             
             <div class="tab">
               <div class="form-group">
-                <label for="country">Country</label>
+                <label for="country"><b>Country: </b></label>
               <select id="country" name="country" class="form-control">
                 <option value="Afghanistan">Afghanistan</option>
                 <option value="Åland Islands">Åland Islands</option>
@@ -505,6 +510,7 @@
 
 
           <div class="tab">
+            <label for="country"><b>Content types of choice: </b></label>
             <div class="form-check">
                 <input type="checkbox" id="TeamStatistics" name="Team Statistics" class="form-check-input" value="clicked">
                 <label class="form-check-label" for="TeamStatistics">Team Statistics</label>
@@ -525,13 +531,17 @@
             
         <div class="tab">
           <div class="form-group">
-              <label for="knowledge">Knowledge level:</label>
+              <label for="knowledge"><b>Knowledge level: </b></label>
               <select id="knowledge" name="knowledge" class="form-control">
                   <option value="Beginner">Beginner</option>
                   <option value="Advanced">Advanced</option>
               </select>
           </div>
       </div>
+
+            <div id="loadingIcon" style="display: none; text-align: center;">
+                <img src="https://i.stack.imgur.com/ATB3o.gif" alt="Loading..." />
+            </div>
 
             <div style="overflow:auto;">
               <div style="float:right;">
@@ -562,83 +572,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js"></script> -->
 
     <Script>
-// $('.selectpicker').selectpicker();
-
-// var currentTab = 0; // Current tab is set to be the first tab (0)
-// showTab(currentTab); // Display the current tab
-
-// function showTab(n) {
-//   // This function will display the specified tab of the form ...
-//   var x = document.getElementsByClassName("tab");
-//   x[n].style.display = "block";
-//   // ... and fix the Previous/Next buttons:
-//   if (n == 0) {
-//     document.getElementById("prevBtn").style.display = "none";
-//   } else {
-//     document.getElementById("prevBtn").style.display = "inline";
-//   }
-//   if (n == (x.length - 1)) {
-//     document.getElementById("nextBtn").innerHTML = "Submit";
-//   } else {
-//     document.getElementById("nextBtn").innerHTML = "Next";
-//   }
-//   // ... and run a function that displays the correct step indicator:
-//   fixStepIndicator(n)
-// }
-
-// // THIS IS THE REAL ONE
-// function nextPrev(n) {
-//   // This function will figure out which tab to display
-//   var x = document.getElementsByClassName("tab");
-//   // Exit the function if any field in the current tab is invalid:
-//   if (n == 1 && !validateForm()) return false;
-//   // Hide the current tab:
-//   x[currentTab].style.display = "none";
-//   // Increase or decrease the current tab by 1:
-//   currentTab = currentTab + n;
-//   // if you have reached the end of the form... :
-//   if (currentTab >= x.length) {
-//     //...the form gets submitted:
-//     document.getElementById("regForm").submit();
-//     return false;
-//   }
-//   // Otherwise, display the correct tab:
-//   showTab(currentTab);
-// }
-
-// // THIS IS THE REAL ONE
-// function validateForm() {
-//     // This function deals with validation of the form fields
-//     var x, y, i, valid = true;
-//     x = document.getElementsByClassName("tab");
-//     y = x[currentTab].getElementsByTagName("input");
-//     // A loop that checks every input field in the current tab:
-//     for (i = 0; i < y.length; i++) {
-//     // If a field is empty...
-//     if (y[i].value == "") {
-//         // add an "invalid" class to the field:
-//         y[i].className += " invalid";
-//         // and set the current valid status to false:
-//         valid = false;
-//     }
-//     }
-//     // If the valid status is true, mark the step as finished and valid:
-//     if (valid) {
-//     document.getElementsByClassName("step")[currentTab].className += " finish";
-//     }
-//     console.log(valid)
-//     return valid; // return the valid status
-//     }
-
-//     function fixStepIndicator(n) {
-//     // This function removes the "active" class of all steps...
-//     var i, x = document.getElementsByClassName("step");
-//     for (i = 0; i < x.length; i++) {
-//     x[i].className = x[i].className.replace(" active", "");
-//     }
-//     //... and adds the "active" class to the current step:
-//     x[n].className += " active";
-//     }
 
 // NEW CODE
 
@@ -683,6 +616,7 @@ function nextPrev(n) {
 
     if (currentTab >= x.length) {
         document.getElementById("regForm").submit();
+        document.getElementById('loadingIcon').style.display = 'block';
         return false;
     }
 
