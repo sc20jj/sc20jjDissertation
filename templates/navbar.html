@@ -1,33 +1,21 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="#">User Adaptive Football News App</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('index') }}">Home</a>
-          </li>
-          <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('usermodel') }}">User Model</a>
-          </li>
-          <!-- <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('injuries', word='Crystal Palace') }}">Injuries</a>
-          </li>
-          <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('latest', word='Crystal Palace') }}">Latest</a>
-          </li>
-          <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('statistics', word='Crystal Palace') }}">Stats</a>
-          </li>
-          <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('transfers', word='Crystal Palace') }}">Transfers</a>
-          </li> -->
-      </ul>
-      <!-- Logout button -->
-      <form class="form-inline my-2 my-lg-0">
-        <a href="{{ url_for('clear') }}" class="btn btn-outline-danger my-2 my-sm-0">Clear Session</a>
-      </form>
-  </div>
-</nav>
+    <a class="navbar-brand" href="#">User Adaptive Football News App</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('usermodel') }}">User Model</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <a href="{{ url_for('data_policy') }}" class="btn btn-outline-primary mr-2 my-2 my-sm-0">Data Policy</a>
+          <a href="{{ url_for('clear') }}" class="btn btn-outline-danger my-2 my-sm-0">Clear Session</a>
+        </form>
+    </div>
+  </nav>

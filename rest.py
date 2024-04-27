@@ -67,7 +67,7 @@ def large_language_model_classifier(article):
         "messages": [
             {
                 "role": "user",
-                "content": f"Can you take in a news article and classify it into as many of these categories as you see fit that are relavent to the article's information focusing on key team names mentioned in the article, leagues and news types. But only return a string of categories separated by commas: {categories_string}. Here is the article: {article}"
+                "content": f"Can you take in a news article and classify it into as many of these categories as you see fit that are relavent to the article's information focusing on key team names mentioned in the article, leagues and news types (they must be a category that I have given you). But only return a string of categories separated by commas: {categories_string}. Here is the article: {article}"
             }
         ]
     }

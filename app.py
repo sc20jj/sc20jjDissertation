@@ -333,6 +333,10 @@ def clear():
     session.pop("queries", None)
     return redirect(url_for("index"))
 
+@app.route('/dataPolicy')
+def data_policy():
+    return render_template("dataPolicy.html")
+
 @app.route('/gpt', methods=['GET'])  # Only allow GET requests for this route
 def gpt():
     # Get the keyword from the request arguments
