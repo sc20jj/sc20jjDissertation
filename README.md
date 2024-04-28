@@ -18,7 +18,7 @@ The aim of the project is to explore the construction of a session-based footbal
 #### Testing
 
 - The project utilises a manual testing plan
-- The project has a manual regression pack to perform regression tests to ensure the cooperation of all of the system's components
+- The project has a manual regression for developers to perform regression tests to ensure the cooperation of all of the system's components
 
 #### Data Policy
 
