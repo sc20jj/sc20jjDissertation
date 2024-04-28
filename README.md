@@ -6,14 +6,19 @@ The aim of the project is to explore the construction of a session-based footbal
 
 #### Installation
 - Git clone the online repository
-- ensure that the following python packages are installed (this can be done with pip)
+- Ensure that the following python packages are installed (this can be done with pip)
   - pip install Flask
   - pip install beautifulsoup4
   - pip install scikit-learn
   - pip install numpy
-- to run the application locally, run the 'flask run' command in the terminal
-- head to the following url: localhost:5000
-- you should now be able to use the application and all of its functionality 
+- To run the application locally, run the 'flask run' command in the terminal
+- Head to the following url: localhost:5000
+- You should now be able to use the application and all of its functionality 
+
+#### Testing
+
+- The project utilises a manual testing plan
+- The project has a manual regression pack to perform regression tests to ensure the cooperation of all of the system's components
 
 #### Data Policy
 
