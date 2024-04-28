@@ -23,4 +23,4 @@ Any information collected by the website during your activity can be removed via
 
 The application is compliant with UK data privacy laws and GDPR.  Information is not shared with any third parties to ensure user privacy.
         
-By using our website, you agree to the terms of this Privacy Policy. If you have any questions or concerns about our privacy practices, please contact us at [this email]("mailto:sc20jj@leeds.ac.uk")
+By using our website, you agree to the terms of this Privacy Policy. If you have any questions or concerns about our privacy practices, please contact us at [this email](mailto:sc20jj@leeds.ac.uk)
