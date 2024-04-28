@@ -12,7 +12,7 @@ The aim of the project is to explore the construction of a session-based footbal
   - pip install scikit-learn
   - pip install numpy
 - to run the application locally, run the 'flask run' command in the terminal
-- head to the url: localhost:5000
+- head to the url: [localhost:5000](localhost:5000)
 - you should now be able to use the application and all of its functionality 
 
 #### Data Policy
