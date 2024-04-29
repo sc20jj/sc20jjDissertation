@@ -66,10 +66,6 @@ def extract_news(url):
     # Combine paragraphs into a single string
     article_content = '\n'.join(paragraphs)
     
-    print(title)
-    print(image)
-    print(article_content)
-
     return title, image, article_content
 
 def count_item_news_type_pairs(formatted_news_feed):
@@ -89,7 +85,6 @@ def count_item_news_type_pairs(formatted_news_feed):
     for pair, count in pairs_count.items():
         if count > 1:
             # Convert the first element of the pair to an integer before subtracting 1
-            print(pair[0] + " " + pair[1] + " " + str(count - 1))
             # Call google_news_GET_many and append each result to the result array
             data_list = google_news_GET_many(pair[0], pair[1], count - 1)
             for data_item in data_list:
@@ -166,12 +161,7 @@ def index():
 
     session['queries'] = queries
 
-    # Display generated queries
-    for query in queries:
-        print(f"Query: {query[0]} {query[1]} (Relevance Score: {query[2]})")
-
     proportions = calculate_proportions(queries)
-    print(proportions)
 
     session['proportions'] = proportions
 
@@ -179,12 +169,8 @@ def index():
 
     formatted_news_feed = generate_formatted_news_feed(queries, proportions, total_articles)
 
-    print("Formatted News Feed:", formatted_news_feed)
-
     extra_content = count_item_news_type_pairs(formatted_news_feed)
-    print("Extra Content: ")
-    print(extra_content)
-
+    
     # Create a dictionary to store unique items based on 'item' and 'news_type' combination
     unique_items_dict = {}
 
@@ -202,9 +188,6 @@ def index():
 
     for item in extra_content:
         unique_items.append(item)
-
-    print("Unique Items with Extra Content:")
-    print(unique_items)
     
     # add demographic result to the news feed
     demographic_result_list = google_news_demographic_GET("football news", "in " + str(session['demographic profile']['Country']))
@@ -212,8 +195,6 @@ def index():
     unique_items.append({'item': "Location", 'news_type': 'Team News Updates', 'data': demographic_result})
 
     pa = process_articles(unique_items, session['interests profile'])
-    print("Processed Articles: ")
-    print(pa)
 
     return render_template("feed.html", news_feed=pa, user=session['demographic profile'])
 
@@ -277,7 +258,6 @@ def form():
             "Last Fixture"
         ]
 
-        print("Meep meep")
         # Create a hashmap with teams as keys and corresponding values initialized to 0
         team_scores = {team: 0 for team in all_teams} 
         content_scores = {c: 0 for c in content}
@@ -309,13 +289,6 @@ def form():
             "Country" : session['user profile']['country'], 
             "Knowledge Level" : session['user profile']['knowledge']
         }
-
-        print(team_scores)
-        print("-----")
-        print(content_scores)
-        print("-----")
-        print(demographic_info)
-        print("-----")
 
         session['interests profile'] = team_scores
         session['content style profile'] = content_scores
@@ -401,15 +374,10 @@ def news():
 
     title, image, article_content = extract_news(link)
 
-    print("Demographic Profile: ")
-    print(demographic_profile)
-
     if demographic_profile['Knowledge Level'] == 'Beginner':
         keywords = extract_names(title + " " + article_content)
     else:
         keywords = []
-
-    print(keywords)
 
     return render_template('news.html', title=title, image=image, article_content=article_content, keywords=keywords)
 
@@ -419,18 +387,11 @@ def like():
         # Retrieve data from the form
         word1 = request.form['word1']
         word2 = request.form['word2']
-        print(f'Word 1: {word1}, Word 2: {word2}')
 
         session['interests profile'][word2] += 0.1
         session['content style profile'][word1] += 0.1
 
-        print(session['interests profile'])
-        print(session['content style profile'])
-        print("-----")
         test = generate_queries(session['interests profile'], session['content style profile'])
-        # Display generated queries
-        for query in test:
-            print(f"Query: {query[0]} {query[1]} (Relevance Score: {query[2]})")
 
         session['interests profile'] = session['interests profile']
         session['content style profile'] = session['content style profile']
@@ -443,7 +404,6 @@ def dislike():
         # Retrieve data from the form
         word1 = request.form['word1']
         word2 = request.form['word2']
-        print(f'Word 1: {word1}, Word 2: {word2}')
 
         t1 = session['interests profile']
         t2 = session['content style profile']
@@ -451,13 +411,7 @@ def dislike():
         t1[word2] -= 0.1
         t2[word1] -= 0.1
 
-        print(t1)
-        print(t2)
-
-        print("-----")
         test = generate_queries(t1, t2)
-        for query in test:
-            print(f"Query: {query[0]} {query[1]} (Relevance Score: {query[2]})")
 
         session['interests profile'] = t1
         session['content style profile'] = t2
@@ -475,12 +429,6 @@ def usermodel():
 def process_categories(categories, opinion):
     category_list = categories.split(',')
     
-    print("Category List: ")
-    print(category_list)
-
-    print("content: ")
-    print(content)
-
     for category in category_list:
         category = category.strip()
         if category in content:
@@ -595,8 +543,6 @@ def process_articles(articles, user_model):
         else:
             content = data['title']
         
-        print("TESTING!!!!" + str(data))
-
         # Compute TF for the article based on the user model
         tf = compute_tf_for_article(content, user_model)
         

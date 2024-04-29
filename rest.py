@@ -58,9 +58,6 @@ def large_language_model_classifier(article):
     # Convert the list to a string separated by commas
     categories_string = ", ".join(all_categories)
 
-    print("categories string: ")
-    print(categories_string)
-
     url = "https://chatgpt-best-price.p.rapidapi.com/v1/chat/completions"
     payload = {
         "model": "gpt-3.5-turbo",
@@ -80,7 +77,6 @@ def large_language_model_classifier(article):
 
     data  = json.dumps(response.json())
     data2 = json.loads(data)
-    #print(data2)
     return data2['choices'][0]['message']['content']
 
 def team_statistics_GET(team_id):
@@ -92,12 +88,9 @@ def team_statistics_GET(team_id):
         "X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
     }
     response_leagueStandings = requests.get(url_leagueStandings, headers=headers, params=querystring_leagueStandings)
-    #print(response_leagueStandings.json())
 
     data = json.dumps(response_leagueStandings.json())
     parsed_data = json.loads(data)
-
-    print(parsed_data)
 
     # Extract Premier League information
     premier_league_info = parsed_data['response'][1]['league']
@@ -114,19 +107,7 @@ def team_statistics_GET(team_id):
     matches_won = team_standing['all']['win']
     matches_lost = team_standing['all']['lose']
     matches_drawn = team_standing['all']['draw']
-
-    # Print extracted information
-    print("Premier League Information:")
-    print("League Name:", league_name)
-    print("League Position:", league_position)
-    print("Total Points:", total_points)
-    print("Goal Difference:", goal_difference)
-    print("Total Matches Played:", total_matches_played)
-    print("Matches Won:", matches_won)
-    print("Matches Lost:", matches_lost)
-    print("Matches Drawn:", matches_drawn)
-
-    
+   
     title = "Team statistics news"
     description = "see how this team is currently doing in the league and their statistics this season"
 
@@ -143,7 +124,6 @@ def team_recent_transfers_GET(team_id):
     }
 
     response_transfer = requests.get(url_transfer, headers=headers_transfer, params=querystring_transfer)
-    print(response_transfer.json())
 
     # Parse JSON response
     data_pre = json.dumps(response_transfer.json())
@@ -158,10 +138,7 @@ def team_recent_transfers_GET(team_id):
    # Sort players based on their earliest transfer date
     sorted_players = sorted(data['response'], key=lambda x: parse_date(x['transfers'][0]['date']))
 
-    print(sorted_players)
-
     # Retrieve the 3 most recent transfers
-    #recent_transfers = data['response'][-5:]
     recent_transfers = sorted_players[-5:]
 
     # Iterate over recent transfers and store required information
@@ -187,10 +164,6 @@ def team_recent_transfers_GET(team_id):
             'Outgoing Team Logo': outgoing_team_logo
         })
 
-    # Print transfer information
-    for transfer in transfer_info:
-        print(transfer)
-
     return transfer_info
 
 def team_recent_injuries_GET(team_id):
@@ -201,8 +174,6 @@ def team_recent_injuries_GET(team_id):
         "X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
     }
     response_injury = requests.get(url_injury, headers=headers_injury, params=querystring_injury)
-    
-    print(response_injury.json())
 
     # Parse JSON response
     data_pre = json.dumps(response_injury.json())
@@ -221,8 +192,6 @@ def team_recent_injuries_GET(team_id):
     #recent_transfers = data['response'][-5:]
     recent_injuries = sorted_players[-5:]
 
-    #print(recent_injuries)
-
     # Extracting information
     injured_players = []
     for entry in recent_injuries:
@@ -237,8 +206,6 @@ def team_recent_injuries_GET(team_id):
             'Fixture Details': fixture_details,
             'Fixture Date/Time': fixture_date_time
         })
-
-    print(injured_players)
 
     return injured_players
 
@@ -269,8 +236,6 @@ def team_lastest_score_GET(team_id):
     data  = json.dumps(response1.json())
     parsed_data = json.loads(data)
 
-    print(parsed_data)
-
     score = ""
     home_goals = []
     away_goals = []
@@ -287,9 +252,6 @@ def team_lastest_score_GET(team_id):
             away_team_name = event['team']['name']
         else:
             home_team_name = event['team']['name']
-
-    print("home team: " + str(home_team_name))
-    print("away team: " + str(away_team_name))
 
     # Iterate over the response data
     for event in parsed_data['response']:
@@ -320,14 +282,6 @@ def team_lastest_score_GET(team_id):
 
     score = home_team_name +  ": " + str(len(home_goals)) + " - " + away_team_name +  ": " + str(len(away_goals))
 
-    # Print goal scorers, red cards, and yellow cards for each team
-    print("Liverpool Goal Scorers:", home_goals)
-    print("Opponent Goal Scorers:", away_goals)
-    print("Liverpool Red Cards:", home_red_cards)
-    print("Opponent Red Cards:", away_red_cards)
-    print("Liverpool Yellow Cards:", home_yellow_cards)
-    print("Opponent Yellow Cards:", away_yellow_cards)
-
     return home_team_name, away_team_name, score, home_goals, away_goals, home_red_cards, away_red_cards, home_yellow_cards, away_yellow_cards
 
 def team_id_GET(team_name):
@@ -342,7 +296,6 @@ def team_id_GET(team_name):
 
     response = requests.get(url, headers=headers, params=params)
     data = response.json()
-    print(data)
     if data['response']:
         return data['response'][0]['team']['id']
     else:
